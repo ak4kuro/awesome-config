@@ -1,1 +1,14 @@
-.git
+# Awesome WM
+*.bak
+*.disabled
+*.swp
+*~
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test / lint artifacts
+luac.out
+*.luac
