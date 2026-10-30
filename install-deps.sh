@@ -30,6 +30,11 @@ PACKAGES=(
 	networkmanager
 	network-manager-applet
 	iproute2
+	# Audio (PipeWire + pactl para el widget de volumen; pulse.lua admite pactl)
+	pipewire
+	pipewire-pulse
+	wireplumber
+	libpulse
 	# Monitoreo y utilidades que invoca redflat/system.lua y widgets
 	lm_sensors
 	smartmontools

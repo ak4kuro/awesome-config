@@ -1,5 +1,5 @@
 -- luacheck para config de Awesome WM
-std = "lua51+luajit"
+std = "lua53+luajit"
 
 -- Globals inyectados por Awesome en tiempo de ejecución
 read_globals = {

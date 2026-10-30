@@ -81,12 +81,13 @@ Las entradas marcadas *(modo M+F2)* solo funcionan dentro del navegador de layou
 | `Mod4+Right` | Escritorio siguiente |
 | `Mod4+Left` | Escritorio anterior |
 
-## Pantalla (4)
+## Pantalla (5)
 
 | Atajo | Acción |
 |---|---|
 | `Mod4+Control+Right` | Focus next screen |
 | `Mod4+Control+Left` | Focus previous screen |
+| `Mod4+w` | Toggle wallpaper rotation |
 | `Mod4+Shift+Right` | Move to next screen |
 | `Mod4+Shift+Left` | Move to previous screen |
 
@@ -161,7 +162,7 @@ Las entradas marcadas *(modo M+F2)* solo funcionan dentro del navegador de layou
 | `Ratón-3` | Menú principal (clic en el escritorio) |
 | `Rueda` | Cambiar de escritorio (rueda en el escritorio) |
 
-## Keychain (Mod+c) (18)
+## Keychain (Mod+c) (20)
 
 | Atajo | Acción |
 |---|---|
@@ -178,7 +179,9 @@ Las entradas marcadas *(modo M+F2)* solo funcionan dentro del navegador de layou
 | `Mod4+c s 1..6` | Alternar ventana en el escritorio |
 | `Mod4+c d 1..6` | Move client and show tag |
 | `Mod4+c u u` | Buscar actualizaciones |
-| `Mod4+c u m` | Comprobar correo nuevo |
+| `Mod4+c u c` | Top procesos por CPU |
+| `Mod4+c u m` | Top procesos por memoria |
+| `Mod4+c u s` | Test de velocidad de red |
 | `Mod4+c p s` | Alternar pegajosa |
 | `Mod4+c p o` | Alternar siempre encima |
 | `Mod4+c p f` | Alternar flotante |
