@@ -177,7 +177,7 @@ local function build_group_tile(group, count, tile, on_click)
 	local count_pt = math.max(9, math.floor(tile / 16))
 	local name = wibox.widget({
 		markup = string.format(
-			'<span font="Sans Bold %d" color="#ffffff">%s</span>',
+			'<span font="Lato Bold %d" color="#ffffff">%s</span>',
 			name_pt,
 			gears.string.xml_escape(wrapped_name(group, tile))
 		),
@@ -187,7 +187,7 @@ local function build_group_tile(group, count, tile, on_click)
 	})
 	local num = wibox.widget({
 		markup = string.format(
-			'<span font="Sans %d" color="#f0f0f0">%s</span>',
+			'<span font="Lato %d" color="#f0f0f0">%s</span>',
 			count_pt,
 			gears.string.xml_escape(string.format(L("%d shortcuts"), count))
 		),
@@ -272,7 +272,7 @@ local function build_row(card)
 	combo.forced_width = 190
 	local desc = wibox.widget({
 		markup = string.format(
-			'<span font="Sans 10" color="#f0f0f0">%s</span>',
+			'<span font="Lato 10" color="#f0f0f0">%s</span>',
 			gears.string.xml_escape(card.desc)
 		),
 		align = "left",
@@ -283,7 +283,7 @@ local function build_row(card)
 		desc:set_ellipsize("end")
 	end
 	local play = wibox.widget({
-		markup = card.run and '<span font="Sans 10" color="#ffffff">▶</span>' or "",
+		markup = card.run and '<span font="Lato 10" color="#ffffff">▶</span>' or "",
 		align = "right",
 		valign = "center",
 		widget = wibox.widget.textbox,
@@ -334,7 +334,7 @@ local function show_detail(group)
 
 	local header = wibox.widget({
 		markup = string.format(
-			'<span font="Sans Bold 12" color="#ffffff">◀ %s</span>   <span font="Sans 9" color="#ffffff">%s</span>',
+			'<span font="Lato Bold 12" color="#ffffff">◀ %s</span>   <span font="Lato 9" color="#ffffff">%s</span>',
 			gears.string.xml_escape(group),
 			string.format(L("%d shortcuts — click a row to run it"), #rows)
 		),

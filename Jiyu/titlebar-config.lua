@@ -165,7 +165,7 @@ local function mini_left_title(c, style)
 	tb.align = "left"
 	tb.valign = "center"
 	tb.ellipsize = "end"
-	tb.font = "Roboto 8"
+	tb.font = "Lato 8"
 
 	local function refresh()
 		local name = awful.util.escape(c.name or "")

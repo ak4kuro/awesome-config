@@ -7,7 +7,6 @@ local beautiful = require("beautiful")
 local awful = require("awful")
 local wibox = require("wibox")
 local gears = require("gears")
-local naughty = require("naughty")
 local redflat = require("redflat")
 local redutil = require("redflat.util")
 
@@ -390,7 +389,7 @@ function desktop:init(args)
 	}
 	-- Crear widget de texto simple para clima
 	local weather_text = wibox.widget.textbox()
-	weather_text:set_font("Sans 14")
+	weather_text:set_font("Lato 14")
 	weather_text:set_align("center")
 
 	-- Escapar caracteres Pango/XML en texto para set_markup
@@ -431,13 +430,13 @@ function desktop:init(args)
 		-- Mapear condicion a icono emoji
 		local icon = "🌡"
 		local c = cond_en:lower()
-		if c:find("clear") or c:find("sunny") then icon = "☀"
-		elseif c:find("partly") then icon = "⛅"
-		elseif c:find("cloud") or c:find("overcast") then icon = "☁"
-		elseif c:find("rain") or c:find("drizzle") or c:find("shower") then icon = "🌧"
-		elseif c:find("thunder") or c:find("storm") then icon = "⛈"
-		elseif c:find("snow") then icon = "❄"
-		elseif c:find("fog") or c:find("mist") then icon = "🌫"
+		if c:find("clear") or c:find("sunny") then icon = "☀\u{FE0F}"
+		elseif c:find("partly") then icon = "⛅\u{FE0F}"
+		elseif c:find("cloud") or c:find("overcast") then icon = "☁\u{FE0F}"
+		elseif c:find("rain") or c:find("drizzle") or c:find("shower") then icon = "🌧\u{FE0F}"
+		elseif c:find("thunder") or c:find("storm") then icon = "⛈\u{FE0F}"
+		elseif c:find("snow") then icon = "❄\u{FE0F}"
+		elseif c:find("fog") or c:find("mist") then icon = "🌫\u{FE0F}"
 		end
 		weather_text:set_markup("<span color='" .. (beautiful.color and beautiful.color.text or "#000000") .. "'>" .. icon .. " " .. escape_markup(city) .. " · " .. escape_markup(cond_es) .. " " .. escape_markup(temp) .. "</span>")
 	end
@@ -450,14 +449,14 @@ function desktop:init(args)
 	-- Obtener ciudad: manual o por IP
 	local function fetch_weather()
 		if WEATHER_CITY ~= "" then
-			awful.spawn.easy_async("curl -s 'https://wttr.in/" .. sanitize_city(WEATHER_CITY) .. "?format=%C|%t' 2>/dev/null", function(wout)
+			awful.spawn.easy_async("curl -s --max-time 15 'https://wttr.in/" .. sanitize_city(WEATHER_CITY) .. "?format=%C|%t' 2>/dev/null", function(wout)
 				update_weather_text(WEATHER_CITY, wout)
 			end)
 		else
-			awful.spawn.easy_async("curl -s 'https://ipinfo.io/city' 2>/dev/null", function(stdout)
+			awful.spawn.easy_async("curl -s --max-time 15 'https://ipinfo.io/city' 2>/dev/null", function(stdout)
 				local city = stdout:gsub("\n", ""):gsub("^%s*(.-)%s*$", "%1")
 				if city == "" then city = "Madrid" end
-				awful.spawn.easy_async("curl -s 'https://wttr.in/" .. sanitize_city(city) .. "?format=%C|%t' 2>/dev/null", function(wout)
+				awful.spawn.easy_async("curl -s --max-time 15 'https://wttr.in/" .. sanitize_city(city) .. "?format=%C|%t' 2>/dev/null", function(wout)
 					update_weather_text(city, wout)
 				end)
 			end)
@@ -465,6 +464,8 @@ function desktop:init(args)
 	end
 
 	fetch_weather()
+	-- Refrescar el clima cada 30 min
+	gears.timer({ timeout = 1800, autostart = true, callback = fetch_weather })
 	-- Crear area compatible con desktop.build.static
 	weather_w.body = { area = wibox.container.margin(weather_text, 10, 10, 10, 10) }
 	weather_w.body.style = { color = { wibox = beautiful.desktopbg or "#d0d0d0" } }

@@ -8,8 +8,6 @@ local awful = require("awful")
 local wibox = require("wibox")
 local gears = require("gears")
 local beautiful = require("beautiful")
-local menubar = require("menubar")
-
 local dock = { wibox = nil, visible = false }
 
 -- Lista de aplicaciones favoritas (todas instaladas en el sistema)

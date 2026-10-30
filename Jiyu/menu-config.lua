@@ -36,9 +36,6 @@ function menu:init(args)
 	local icon = redflat.util.table.check(beautiful, "icon.awesome") and beautiful.icon.awesome
 		or (M .. "/awesome.svg")
 
-	-- extra commands
-	local ranger_comm = env.terminal .. " -e ranger"
-
 	-- Application submenu — iconos de sistema con fallback gris
 	------------------------------------------------------------
 	local appmenu = redflat.service.dfparser.menu({ icons = app_icon_style, wm_name = "awesome" })

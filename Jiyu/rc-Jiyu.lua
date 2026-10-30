@@ -8,6 +8,13 @@
 -- Standard awesome library
 ------------------------------------------------------------
 local awful = require("awful")
+local tagutil = require("Jiyu.util-tag")
+local wibox = require("wibox")
+local beautiful = require("beautiful")
+local naughty = require("naughty")
+local gears = require("gears")
+local L = require("Jiyu.locale").t
+
 -- Cualquier código (incl. librerías) que llame awful.tag.viewtoggle(nil) rompe en tag.lua:1444.
 do
 	local _viewtoggle = awful.tag.viewtoggle
@@ -15,15 +22,12 @@ do
 		if t == nil then
 			return
 		end
-		pcall(_viewtoggle, t)
+		local ok, err = pcall(_viewtoggle, t)
+		if not ok then
+			gears.debug.print_warning("viewtoggle: " .. tostring(err))
+		end
 	end
 end
-local tagutil = require("Jiyu.util-tag")
-local wibox = require("wibox")
-local beautiful = require("beautiful")
-local naughty = require("naughty")
-local gears = require("gears")
-local L = require("Jiyu.locale").t
 
 require("awful.autofocus")
 
@@ -64,41 +68,12 @@ env:init({
 local redflat   = require("redflat")
 local redutil   = require("redflat.util")
 local redmenu   = require("redflat.menu")
-local animations = require("Jiyu.animations")
 local dock = require("Jiyu.dock")
 local clipboard = require("Jiyu.clipboard")
 
 redflat.startup.locked = lock.autostart
 
--- Wrapper de naughty.notify: clic medio copia el contenido al portapapeles
--- DESACTIVADO TEMPORALMENTE PARA DEBUG
---------------------------------------------------------------------------------
--- local _naughty_notify = naughty.notify
--- naughty.notify = function(args)
--- 	args = args or {}
--- 	local full_text = ""
--- 	if args.title then full_text = full_text .. args.title .. ": " end
--- 	if args.text  then full_text = full_text .. args.text end
--- 	full_text = full_text:gsub("^%s+", ""):gsub("%s+$", "")
--- 	local orig_run = args.run
--- 	args.run = function(n)
--- 		if orig_run then orig_run(n) end
--- 	end
--- 	local n = _naughty_notify(args)
--- 	if n then
--- 		n:connect_signal("button::press", function(_, _, _, b)
--- 			if b == 2 then
--- 				awful.spawn.with_shell("echo -n " .. string.format("%q", full_text) .. " | xclip -selection clipboard")
--- 				_naughty_notify({ text = L("Copied to clipboard"), timeout = 1, font = "Sans 9" })
--- 			end
--- 		end)
--- 	end
--- 	return n
--- end
 redflat.startup:activate()
-
--- Inicializar animaciones
-animations:init()
 
 -- Inicializar clipboard history
 clipboard:init()
@@ -218,26 +193,6 @@ textclock.buttons = awful.util.table.join(
 	awful.button({}, 1, function() redflat.float.calendar:show() end)
 )
 
--- Screen indicator (muestra en qué monitor está el foco)
---------------------------------------------------------------------------------
-local screen_indicator = {}
-pcall(function()
-	screen_indicator.widget = wibox.widget.textbox()
-	screen_indicator.widget:set_font(beautiful.fonts and beautiful.fonts.tiny or "Sans bold 10")
-	screen_indicator.widget:set_markup('<span color="' .. (beautiful.color and beautiful.color.main or "#b1222b") .. '"><b>M1</b></span>')
-
-	local function update_indicator()
-		local s = awful.screen.focused()
-		local idx = (s and s.index) or 1
-		local color = beautiful.color and beautiful.color.main or "#b1222b"
-		screen_indicator.widget:set_markup('<span color="' .. color .. '"><b>M' .. idx .. '</b></span>')
-	end
-
-	client.connect_signal("focus", update_indicator)
-	client.connect_signal("unfocus", update_indicator)
-	gears.timer.delayed_call(update_indicator)
-end)
-
 -- Layoutbox configure
 --------------------------------------------------------------------------------
 local layoutbox = {}
@@ -295,7 +250,7 @@ volume_osd_timer:connect_signal("timeout", function()
 				title = L("Volume"),
 				text = (mut == "yes") and ((pct or "?") .. " [MUTED]") or (pct or "?"),
 				timeout = 1,
-				font = "Sans 10",
+				font = "Lato 10",
 				screen = awful.screen.focused(),
 			})
 		end
@@ -458,7 +413,7 @@ kbindicator.buttons = awful.util.table.join(
 --------------------------------------------------------------------------------
 local capslock = {}
 capslock.widget = wibox.widget.textbox("")
-capslock.widget:set_font("Sans bold 9")
+capslock.widget:set_font("Lato bold 9")
 capslock.widget:set_markup('<span color="#b1222b"> </span>')
 
 local function update_capslock()
@@ -474,25 +429,6 @@ end
 
 -- Comprobar Caps Lock al inicio y cada 2s (ligero: xset q es rápido)
 gears.timer({ timeout = 2, autostart = true, call_now = true, callback = update_capslock })
-
--- Mail widget
---------------------------------------------------------------------------------
--- mail settings template
-local my_mails = require("Jiyu.mail-example")
-
--- safe load private mail settings
-pcall(function() my_mails = require("private.mail-config") end)
-
--- widget setup
-local mail = {}
-redflat.widget.mail:init({ maillist = my_mails, update_timeout = 15 * 60 })
-mail.widget = redflat.widget.mail()
-
--- buttons
-mail.buttons = awful.util.table.join(
-	awful.button({ }, 1, function () awful.spawn(env.mail, false) end),
-	awful.button({ }, 2, function () redflat.widget.mail:update(true) end)
-)
 
 -- Software update indicator
 --------------------------------------------------------------------------------
@@ -811,7 +747,7 @@ local function speedtest_show_results(json_str, is_librespeed)
 	if not json_str or json_str == "" or json_str:match("^NO_SPEEDTEST") then
 		local err = wibox.widget {
 			markup = '<span color="' .. th.txt .. '">' .. L("Speed test") .. '\n\n' .. L("Install librespeed-cli or speedtest-cli") .. '</span>',
-			font = "Sans 10",
+			font = "Lato 10",
 			align = "center",
 			widget = wibox.widget.textbox,
 		}
@@ -834,7 +770,7 @@ local function speedtest_show_results(json_str, is_librespeed)
 
 	local title = wibox.widget {
 		markup = '<span color="' .. th.main .. '" size="larger"><b>' .. L("Speed test results") .. '</b></span>',
-		font = "Sans 10",
+		font = "Lato 10",
 		align = "center",
 		widget = wibox.widget.textbox,
 	}
@@ -853,12 +789,12 @@ local function speedtest_show_results(json_str, is_librespeed)
 			{
 				{
 					markup = '<span color="' .. th.txt .. '">' .. label .. '</span>',
-					font = "Sans 10",
+					font = "Lato 10",
 					widget = wibox.widget.textbox,
 				},
 				{
 					markup = '<span color="' .. th.main .. '"><b>' .. value .. '</b></span> <span color="' .. th.txt .. '">' .. unit .. '</span>',
-					font = "Sans 10",
+					font = "Lato 10",
 					align = "right",
 					expand = "inside",
 					widget = wibox.widget.textbox,
@@ -885,7 +821,7 @@ local function speedtest_show_results(json_str, is_librespeed)
 
 	local hint = wibox.widget {
 		markup = '<span size="small" color="' .. th.txt .. '">' .. L("Click to close") .. '</span>',
-		font = "Sans 9",
+		font = "Lato 9",
 		align = "center",
 		widget = wibox.widget.textbox,
 	}
@@ -901,7 +837,7 @@ local function run_speedtest()
 	speedtest_popup.loading = true
 	local loading = wibox.widget {
 		markup = '<span color="' .. th.txt .. '">' .. L("Speed test") .. '\n\n' .. L("Running… this takes ~30s") .. '</span>',
-		font = "Sans 10",
+		font = "Lato 10",
 		align = "center",
 		widget = wibox.widget.textbox,
 	}
@@ -935,7 +871,7 @@ local function run_speedtest()
 			speedtest_popup.loading = false
 			local err = wibox.widget {
 				markup = '<span color="' .. th.txt .. '">' .. L("Speed test") .. '\n\n' .. L("Timeout — try again") .. '</span>',
-				font = "Sans 10",
+				font = "Lato 10",
 				align = "center",
 				widget = wibox.widget.textbox,
 			}
@@ -977,6 +913,9 @@ sysmon.buttons.network = awful.util.table.join(
 	awful.button({}, 1, function() redflat.float.netctl:show() end),
 	awful.button({}, 3, run_speedtest)
 )
+
+-- También accesible por atajo: Mod4+c u s
+env.run_speedtest = run_speedtest
 
 -- Temperature widget (icono circular como CPU/RAM; clic abre popup de sensores)
 --------------------------------------------------------------------------------
@@ -1085,26 +1024,22 @@ awful.screen.connect_for_each_screen(
 		if temp_widget.widget then
 			panel_right:add(env.wrapper(temp_widget.widget, "temp", temp_widget.buttons))
 		end
-		panel_right:add(panel_separator())
 		if sysmon.widget.battery then
 			panel_right:add(env.wrapper(sysmon.widget.battery, "battery", sysmon.buttons.battery))
-			panel_right:add(panel_separator())
 		end
+		panel_right:add(panel_separator())
 		panel_right:add(env.wrapper(sysmon.widget.network_down, "network_down", sysmon.buttons.network))
 		panel_right:add(env.wrapper(sysmon.widget.network_up, "network_up", sysmon.buttons.network))
 		panel_right:add(panel_separator())
 		if bluetooth.widget then
 			panel_right:add(env.wrapper(bluetooth.widget, "bluetooth", bluetooth.buttons))
-			panel_right:add(panel_separator())
 		end
 		panel_right:add(env.wrapper(microphone.widget, "microphone", microphone.buttons))
-		panel_right:add(panel_separator())
 		panel_right:add(env.wrapper(volume.widget, "volume", volume.buttons))
-		panel_right:add(panel_separator())
 		if backlight.widget then
 			panel_right:add(env.wrapper(backlight.widget, "brightness", backlight.buttons))
-			panel_right:add(panel_separator())
 		end
+		panel_right:add(panel_separator())
 		panel_right:add(env.wrapper(textclock.widget, "textclock", textclock.buttons))
 		panel_right:add(panel_separator())
 		panel_right:add(env.wrapper(tray.widget, "tray", tray.buttons))
@@ -1117,7 +1052,6 @@ awful.screen.connect_for_each_screen(
 				layout = wibox.layout.fixed.horizontal,
 
 				env.wrapper(layoutbox[s], "layoutbox", layoutbox.buttons),
-				screen_indicator.widget or wibox.widget.textbox(""),
 				panel_separator(),
 				env.wrapper(taglist[s], "taglist"),
 				panel_separator(),
@@ -1125,8 +1059,6 @@ awful.screen.connect_for_each_screen(
 				capslock.widget,
 				panel_separator(),
 				env.wrapper(updates.widget, "updates", updates.buttons),
-				panel_separator(),
-				env.wrapper(mail.widget, "mail", mail.buttons),
 				panel_separator(),
 			},
 			{

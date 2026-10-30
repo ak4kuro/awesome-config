@@ -113,7 +113,7 @@ function env:init(args)
 	-- Sin bg/fg/font muchos wibox y textos quedan en valores por defecto de Awesome (parece "sin tema").
 	local patched = false
 	if not beautiful.font then
-		beautiful.font = (beautiful.fonts and beautiful.fonts.main) or "sans 12"
+		beautiful.font = (beautiful.fonts and beautiful.fonts.main) or "Lato 12"
 		patched = true
 	end
 	if not beautiful.bg_normal then
@@ -153,6 +153,12 @@ end
 -- Wallpaper setup
 --------------------------------------------------------------------------------
 env.wallpaper = function(s)
+	-- Si la rotación está activa, usa su imagen actual (Mod4+w la controla)
+	local ok, wr = pcall(require, "Jiyu.wallpaper-rotate")
+	if ok and wr.active and wr.current then
+		gears.wallpaper.maximized(wr.current, s, false)
+		return
+	end
 	-- Usa el wallpaper definido por el tema (wallpaper-dark/-light.png);
 	-- si no es una imagen legible, cae al color de fondo.
 	local wp = beautiful.wallpaper

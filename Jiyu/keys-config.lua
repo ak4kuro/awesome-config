@@ -8,7 +8,6 @@ local unpack = unpack or table.unpack
 local awful = require("awful")
 local gears = require("gears")
 local beautiful = require("beautiful")
-local wibox = require("wibox")
 local redflat = require("redflat")
 local L = require("Jiyu.locale").t
 local tagutil = require("Jiyu.util-tag")
@@ -17,6 +16,7 @@ local clipboard = require("Jiyu.clipboard")
 local theme_switcher = require("Jiyu.theme-switcher")
 local lang_switcher = require("Jiyu.lang-switcher")
 local periodic_popup = require("Jiyu.periodic-popup")
+local wallrotate = require("Jiyu.wallpaper-rotate")
 
 -- Initialize tables and vars for module
 -----------------------------------------------------------------------------------------------------------------------
@@ -103,14 +103,6 @@ local function tag_select(i)
 	if not screen then return end
 	local tag = screen.tags[i]
 	if tag then tag:view_only() end
-end
-
--- tag management by index
-local function tag_toogle_by_index(i)
-	local screen = awful.screen.focused()
-	if not screen then return end
-	local t = screen.tags[i]
-	tagutil.viewtoggle(t)
 end
 
 local function current_clients()
@@ -475,8 +467,16 @@ function hotkeys:init(args)
 			{ description = L("Check available updates"), group = L("Update info"), keyset = { "u" } }
 		},
 		{
-			{}, "m", function() redflat.widget.mail:update(true) end,
-			{ description = L("Check new mail"), group = L("Update info"), keyset = { "m" } }
+			{}, "c", function() redflat.float.top_cpu:show() end,
+			{ description = L("Top CPU processes"), group = L("Update info"), keyset = { "c" } }
+		},
+		{
+			{}, "m", function() redflat.float.top_mem:show() end,
+			{ description = L("Top memory processes"), group = L("Update info"), keyset = { "m" } }
+		},
+		{
+			{}, "s", function() if env.run_speedtest then env.run_speedtest() end end,
+			{ description = L("Network speed test"), group = L("Update info"), keyset = { "s" } }
 		},
 	}
 
@@ -967,6 +967,10 @@ function hotkeys:init(args)
 		{
 			{ env.mod, "Control" }, "Left", function() awful.screen.focus_relative(-1) end,
 			{ description = L("Focus previous screen"), group = L("Screen")}
+		},
+		{
+			{ env.mod }, "w", function() wallrotate.toggle() end,
+			{ description = L("Toggle wallpaper rotation"), group = L("Screen")}
 		},
 
 		{

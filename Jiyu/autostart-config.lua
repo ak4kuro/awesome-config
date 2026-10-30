@@ -25,9 +25,9 @@ function autostart.run()
 	-- utils (solo apps instaladas)
 	spawn_once("nm-applet")
 	spawn_once("blueman-applet")
-    spawn_once("lxsession")
+	spawn_once("lxsession")
 	-- Compositor: picom para transparencias, sombras y fade.
-	spawn_once([[picom --config /dev/null --backend glx --vsync --fading --shadow --shadow-radius 7 --shadow-offset-x -7 --shadow-offset-y -7 --shadow-exclude "window_type = 'desktop' || window_type = 'dock'"]], "picom")
+	spawn_once([[picom --config /dev/null --backend glx --vsync --fading --shadow --shadow-radius 7 --shadow-offset-x -7 --shadow-offset-y -7 --corner-radius 8 --rounded-corners-exclude "window_type = 'dock' || window_type = 'desktop'" --shadow-exclude "window_type = 'desktop' || window_type = 'dock'"]], "picom")
 
 	-- Daemon de notificaciones: dunst (ligero, configurable).
 	spawn_once("dunst")

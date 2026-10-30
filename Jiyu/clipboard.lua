@@ -64,7 +64,7 @@ function clipboard:show_popup()
 
     if #clipboard.history == 0 then
         local empty = wibox.widget.textbox("  " .. L("Clipboard is empty") .. "  ")
-        empty:set_font("Sans 12")
+        empty:set_font("Lato 12")
         empty:set_markup("<span color='" .. text_color .. "'>  " .. L("Clipboard is empty") .. "  </span>")
         layout:add(empty)
     else
@@ -80,7 +80,7 @@ function clipboard:show_popup()
                 {
                     {
                         markup = "<span color='" .. text_color .. "'>  " .. i .. ". " .. display .. "  </span>",
-                        font = "Sans 11",
+                        font = "Lato 11",
                         widget = wibox.widget.textbox,
                     },
                     left = 8, right = 8, top = 4, bottom = 4,
